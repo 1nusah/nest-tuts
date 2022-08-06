@@ -24,18 +24,15 @@ export class CatsController {
   }
 
   @Get(':id')
-  async getOneCat(
-    @Param('id') id: string,
-    @Res() res: Response,
-  ): Promise<{ message: string } | CatsEntity> {
+  async getOneCat(@Param('id') id: string, @Res() res: Response) {
     const foundCat = await this.catsService.findOneCat(id);
-
+    console.log('my cat', foundCat);
     if (!foundCat) {
       res
         .status(HttpStatus.NOT_FOUND)
         .send({ message: `Cat with ${id} not found` });
     }
-    return foundCat;
+    return res.json(foundCat);
   }
 
   @Delete(':id')

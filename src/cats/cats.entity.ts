@@ -1,18 +1,12 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ObjectID,
-  ObjectIdColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ObjectIdColumn } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 @Entity({ name: 'cats' })
-export class CatsEntity extends BaseEntity {
-  @ObjectIdColumn({ select: false })
-  _id!: ObjectID;
+export class CatsEntity {
+  @ObjectIdColumn()
+  _id: ObjectId;
 
-  @PrimaryGeneratedColumn()
+  @Column()
   id: string;
 
   @Column()

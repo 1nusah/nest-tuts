@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CatsEntity } from './cats.entity';
 import { Repository } from 'typeorm';
 import { CreateCatDto } from './cat.dto';
+import { ObjectId } from 'mongodb';
 
 @Injectable({})
 export class CatsService {
@@ -16,8 +17,8 @@ export class CatsService {
   }
 
   async findOneCat(id: string): Promise<CatsEntity | null> {
-    return await this.catsRepository.findOneBy({
-      id: id,
+    return await this.catsRepository.findOne({
+      where: { _id: new ObjectId(id) },
     });
   }
 
@@ -39,11 +40,11 @@ export class CatsService {
     cat.name = data.name;
     cat.age = data.age;
     cat.color = data.color;
-    await this.catsRepository.update(
-      {
-        id,
-      },
-      cat,
-    );
+
+    const foundCat = await this.findOneCat(id);
+    if (!foundCat) {
+      throw new NotFoundException();
+    }
+    await this.catsRepository.update(id, cat);
   }
 }
