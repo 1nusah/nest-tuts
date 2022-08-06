@@ -13,6 +13,8 @@ import { CatsService } from './cats.service';
 import { CatsEntity } from './cats.entity';
 import { CreateCatDto } from './cat.dto';
 import { Response } from 'express';
+import { JoiValidationPipe } from '../../pipes/joi-validation.pipe';
+import { catsValidationSchema } from './cats.validation';
 
 @Controller('cats')
 export class CatsController {
@@ -42,14 +44,18 @@ export class CatsController {
   }
 
   @Post()
-  async createCat(@Body() CreateCatDto: CreateCatDto): Promise<string> {
+  async createCat(
+    @Body(new JoiValidationPipe(catsValidationSchema))
+    CreateCatDto: CreateCatDto,
+  ): Promise<string> {
     return this.catsService.createCat(CreateCatDto);
   }
 
   @Patch(':id')
   async updateCatById(
     @Param('id') id: string,
-    @Body() CreateCatDto: CreateCatDto,
+    @Body(new JoiValidationPipe(catsValidationSchema))
+    CreateCatDto: CreateCatDto,
   ) {
     return this.catsService.updateOne(id, CreateCatDto);
   }
