@@ -10,16 +10,18 @@ export class CatsService {
     @InjectRepository(CatsEntity)
     private catsRepository: Repository<CatsEntity>,
   ) {}
-  findAll(): Promise<CatsEntity[]> {
-    return this.catsRepository.find();
+
+  async findAll(): Promise<CatsEntity[]> {
+    return await this.catsRepository.find();
   }
 
-  findOne(id: string): Promise<CatsEntity | null> {
-    return this.catsRepository.findOneBy({ id });
+  async findOneCat(id: string): Promise<CatsEntity | null> {
+    return await this.catsRepository.findOneBy({
+      id: id,
+    });
   }
 
   async deleteOne(id: string): Promise<void> {
-    // return `Delete that cat ${id}`;
     await this.catsRepository.delete(id);
   }
 
@@ -28,9 +30,20 @@ export class CatsService {
     cat.name = data.name;
     cat.age = data.age;
     cat.color = data.color;
-    console.log({ cat, data });
+    const catCreated = await this.catsRepository.save(cat);
+    return 'cat successfully created';
+  }
 
-    await this.catsRepository.save(cat);
-    return 'cat created';
+  async updateOne(id: string, data: CreateCatDto) {
+    const cat = new CatsEntity();
+    cat.name = data.name;
+    cat.age = data.age;
+    cat.color = data.color;
+    await this.catsRepository.update(
+      {
+        id,
+      },
+      cat,
+    );
   }
 }

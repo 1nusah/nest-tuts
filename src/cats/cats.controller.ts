@@ -1,7 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CatsEntity } from './cats.entity';
 import { CreateCatDto } from './cat.dto';
+import { Response } from 'express';
 
 @Controller('cats')
 export class CatsController {
@@ -15,12 +26,14 @@ export class CatsController {
   @Get(':id')
   async getOneCat(
     @Param('id') id: string,
+    @Res() res: Response,
   ): Promise<{ message: string } | CatsEntity> {
-    console.log('id', id);
-    const foundCat = await this.catsService.findOne(id);
-    console.log('found cat', foundCat);
+    const foundCat = await this.catsService.findOneCat(id);
+
     if (!foundCat) {
-      return { message: `Cat with id: ${id} doesn't exist` };
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .send({ message: `Cat with ${id} not found` });
     }
     return foundCat;
   }
@@ -33,7 +46,14 @@ export class CatsController {
 
   @Post()
   async createCat(@Body() CreateCatDto: CreateCatDto): Promise<string> {
-    console.log('create dto', CreateCatDto);
     return this.catsService.createCat(CreateCatDto);
+  }
+
+  @Patch(':id')
+  async updateCatById(
+    @Param('id') id: string,
+    @Body() CreateCatDto: CreateCatDto,
+  ) {
+    return this.catsService.updateOne(id, CreateCatDto);
   }
 }

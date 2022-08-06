@@ -1,13 +1,18 @@
 import {
-  Entity,
+  BaseEntity,
   Column,
-  PrimaryGeneratedColumn,
+  Entity,
+  ObjectID,
   ObjectIdColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity({ name: 'cats' })
-export class CatsEntity {
-  @ObjectIdColumn()
+export class CatsEntity extends BaseEntity {
+  @ObjectIdColumn({ select: false })
+  _id!: ObjectID;
+
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()
