@@ -7,28 +7,26 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { CatsService } from './cats.service';
-import { CatsEntity } from './cats.entity';
-import { CreateCatDto } from './cat.dto';
 import { Response } from 'express';
-import { JoiValidationPipe } from '../../pipes/joi-validation.pipe';
-import { catsValidationSchema } from './cats.validation';
+import { CreateCatModel } from './class-validator-vibes/cats.validator';
+import type { CatsQuery } from './cats.type';
 
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Get()
-  getAllCats(): Promise<CatsEntity[]> {
-    return this.catsService.findAll();
+  getAllCats(@Query() queryParams: CatsQuery) {
+    return this.catsService.findAll(queryParams);
   }
 
   @Get(':id')
   async getOneCat(@Param('id') id: string, @Res() res: Response) {
     const foundCat = await this.catsService.findOneCat(id);
-    console.log('my cat', foundCat);
     if (!foundCat) {
       res
         .status(HttpStatus.NOT_FOUND)
@@ -45,8 +43,8 @@ export class CatsController {
 
   @Post()
   async createCat(
-    @Body(new JoiValidationPipe(catsValidationSchema))
-    CreateCatDto: CreateCatDto,
+    @Body()
+    CreateCatDto: CreateCatModel,
   ): Promise<string> {
     return this.catsService.createCat(CreateCatDto);
   }
@@ -54,8 +52,8 @@ export class CatsController {
   @Patch(':id')
   async updateCatById(
     @Param('id') id: string,
-    @Body(new JoiValidationPipe(catsValidationSchema))
-    CreateCatDto: CreateCatDto,
+    @Body()
+    CreateCatDto: CreateCatModel,
   ) {
     return this.catsService.updateOne(id, CreateCatDto);
   }

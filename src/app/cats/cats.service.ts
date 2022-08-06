@@ -4,6 +4,7 @@ import { CatsEntity } from './cats.entity';
 import { Repository } from 'typeorm';
 import { CreateCatDto } from './cat.dto';
 import { ObjectId } from 'mongodb';
+import { CatsQuery } from './cats.type';
 
 @Injectable({})
 export class CatsService {
@@ -12,8 +13,24 @@ export class CatsService {
     private catsRepository: Repository<CatsEntity>,
   ) {}
 
-  async findAll(): Promise<CatsEntity[]> {
-    return await this.catsRepository.find();
+  async findAll(query?: CatsQuery) {
+    const page = query?.page ? Number(query.page) : 1;
+    const limit = query?.limit ? Number(query.limit) : 20;
+
+    const skip = (page - 1) * limit;
+
+    const items = await this.catsRepository.find({ skip, take: limit });
+    const count = await this.catsRepository.count();
+    const lastPage = Math.ceil(count / limit);
+    return {
+      items,
+      meta: {
+        count,
+        page,
+        limit,
+        lastPage,
+      },
+    };
   }
 
   async findOneCat(id: string): Promise<CatsEntity | null> {
