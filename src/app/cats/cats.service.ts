@@ -36,16 +36,16 @@ export class CatsService {
 
     const skip = (page - 1) * limit;
 
-    const [items, data] = await this.catsRepository.findAndCount({
+    const [items, count] = await this.catsRepository.findAndCount({
       ...options,
       skip,
       take: limit,
     });
-    const lastPage = Math.ceil(data / limit);
+    const lastPage = Math.ceil(count / limit);
     return {
       items,
       meta: {
-        data,
+        count,
         page,
         limit,
         lastPage,
