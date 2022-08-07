@@ -16,16 +16,36 @@ export class CatsService {
   async findAll(query?: CatsQuery) {
     const page = query?.page ? Number(query.page) : 1;
     const limit = query?.limit ? Number(query.limit) : 20;
+    let options;
+    options = {
+      select: ['name', 'age', 'color'],
+    };
+    if (query.value) {
+      options = {
+        ...options,
+        where: {
+          ...options['where'],
+          $or: [
+            { name: new RegExp(query.value.toString(), 'i') },
+            { age: new RegExp(query.value.toString(), 'i') },
+            { color: new RegExp(query.value.toString(), 'i') },
+          ],
+        },
+      };
+    }
 
     const skip = (page - 1) * limit;
 
-    const items = await this.catsRepository.find({ skip, take: limit });
-    const count = await this.catsRepository.count();
-    const lastPage = Math.ceil(count / limit);
+    const [items, data] = await this.catsRepository.findAndCount({
+      ...options,
+      skip,
+      take: limit,
+    });
+    const lastPage = Math.ceil(data / limit);
     return {
       items,
       meta: {
-        count,
+        data,
         page,
         limit,
         lastPage,

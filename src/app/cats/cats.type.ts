@@ -1,5 +1,5 @@
 export interface CatsQuery {
   page?: number;
-  search?: string;
+  value?: string;
   limit?: number;
 }
