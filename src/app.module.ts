@@ -6,11 +6,13 @@ import { DogsModule } from './app/dogs/dogs.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { CatsEntity } from './app/cats/cats.entity';
+import { UsersModule } from './app/users/users.module';
 
 @Module({
   imports: [
     CatsModule,
     DogsModule,
+    UsersModule,
     TypeOrmModule.forRoot({
       type: 'mongodb',
       host: 'localhost',
