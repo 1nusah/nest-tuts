@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { CatsEntity } from './app/cats/cats.entity';
 import { UsersModule } from './app/users/users.module';
+import { UsersEntity } from './app/users/users.entity';
+import { AuthModule } from './app/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,10 +19,11 @@ import { UsersModule } from './app/users/users.module';
       type: 'mongodb',
       host: 'localhost',
       port: 27017,
-      entities: [CatsEntity],
+      entities: [CatsEntity, UsersEntity],
       database: 'nest',
       synchronize: false,
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
