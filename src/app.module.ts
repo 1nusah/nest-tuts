@@ -15,6 +15,7 @@ import { AuthModule } from './app/auth/auth.module';
     CatsModule,
     DogsModule,
     UsersModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'mongodb',
       host: 'localhost',
@@ -23,7 +24,6 @@ import { AuthModule } from './app/auth/auth.module';
       database: 'nest',
       synchronize: false,
     }),
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
